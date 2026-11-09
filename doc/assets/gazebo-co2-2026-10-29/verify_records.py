@@ -51,7 +51,7 @@ for res in json.loads((ROOT/'comparison/results.json').read_text()):
  check(close(first(data,predicate),res['top_time']),name+' recorded top time')
 model_checks(ROOT/'hvh/rigid_3N_hvh.sdf',.3,3)
 # Hash manifest makes subsequent changes to the source evidence detectable.
-manifest={str(p.relative_to(ROOT)).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(ROOT.rglob('*')) if p.is_file() and p.name not in ('verification.json','SHA256.json')}
+manifest={str(p.relative_to(ROOT)).replace('\\','/'):hashlib.sha256(p.read_bytes().replace(b'\r\n', b'\n')).hexdigest() for p in sorted(ROOT.rglob('*')) if p.is_file() and p.name not in ('verification.json','SHA256.json')}
 (ROOT/'SHA256.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 output={'verified_on':'2026-11-09','checks_passed':checks,'mass_runs_checked':len(mass_results),'comparison_runs_checked':4,'hvh_runs_checked':0,'excluded_evidence':'hvh/trajectory.csv was overwritten during GUI replay and differs from hvh/results.json; use mass_sweep/300g_sweep_seed42_30s.csv for the final 300g path result','new_physics_runs':0,'scope':'Recorded results recalculated from CSV and checked against SDF/control source; not physical validation'}
 (ROOT/'verification.json').write_text(json.dumps(output,indent=2),encoding='utf-8');print(json.dumps(output))
